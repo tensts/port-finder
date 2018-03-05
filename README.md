@@ -32,4 +32,30 @@ $ ./port 80
 > STATUS: Official [11],
 > DESCRIPTION:
 > Hypertext Transfer Protocol (HTTP)
+
+#mutliple services on same port
+$ port 9999
+> [+] PORT: 9999,
+> PROTO: tcp,
+> STATUS: Unofficial,
+> DESCRIPTION:
+> Hydranode—edonkey2000 TELNET control
+> [+] PORT: 9999,
+> PROTO: tcp,
+> STATUS: Unofficial,
+> DESCRIPTION:
+> Lantronix UDS-10/UDS100[105] RS-485 to Ethernet Converter TELNET control
+> [+] PORT: 9999,
+> PROTO: tcp,
+> STATUS: Unofficial,
+> DESCRIPTION:
+> Urchin Web Analytics[citation needed]
+
+#ports using tcp and udp proto
+$ port 53
+> [+] PORT: 53,
+> PROTO: tcp|udp,
+> STATUS: Official,
+> DESCRIPTION:
+> Domain Name System (DNS) 
 ```
