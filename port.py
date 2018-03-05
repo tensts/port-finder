@@ -93,7 +93,7 @@ def find(port_number):
     cur = con.cursor()
 
     for record in cur.execute("SELECT * FROM PORTS WHERE PORT=?",(port_number,)):
-        print '''PORT: %d,\nPROTO: %s,\nSTATUS: %s,\nDESCRIPTION:\n%s''' % record
+        print '''[+] PORT: %d,\nPROTO: %s,\nSTATUS: %s,\nDESCRIPTION:\n%s''' % record
 
     return True
 
@@ -108,7 +108,7 @@ if __name__ == '__main__':
     if args.v is not False:
         DEBUG=1
 
-    if args.d is not None and os.path.exists(args.d):
+    if args.d is not None:
         DB_PATH = args.d
     
     if args.i is not None and os.path.exists(args.i):
@@ -120,3 +120,5 @@ if __name__ == '__main__':
     
     if isinstance(args.port,int) and args.port != -1:
         find(args.port)
+    else:
+        parser.print_help(sys.stderr)
