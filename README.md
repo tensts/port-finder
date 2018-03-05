@@ -11,22 +11,23 @@ Port list is based on [mephux ports.json](https://github.com/mephux/ports.json) 
 $ pip install -r requirements.txt
 $ chmod +x port.py
 #optionaly
-# ln -s port.py /usr/bin/port [-d path/to/sqlite3_database]
+# ln -s path/to/port.py /usr/bin/port
 $ port -h
 ```
 
 ### Initializing db
 Before first run we have to initialize sqlite3 database
 ```
+$ git submodule init
 $ git submodule update --recursive --remote
-# $ ./port [-d path/to/sqlite3_database] -i path/to/ports.json
+# example usage: ./port.py [-d path/to/sqlite3_database] -i path/to/ports.json
 $ ./port -i data/ports.json/ports.json
 ```
 ### Querying
 To query just simple add port number
 ```
 $ ./port 80
-> PORT: 80,
+> [+] PORT: 80,
 > PROTO: tcp,
 > STATUS: Official [11],
 > DESCRIPTION:
