@@ -17,7 +17,6 @@ JSON_SCHEMA={"description":"string",
 
 def _parse_record(record):
     try:
-        print record
         validate(record,JSON_SCHEMA)
     except ValidationError as e: 
         print "[!] error loading record %d" % idx
@@ -110,9 +109,9 @@ def find(port_number):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('port', metavar="port_number", type=int, nargs='?',default='-1')
-    parser.add_argument('-v', action="store_true", default=False, help="debug on")
-    parser.add_argument('-d', metavar="sqlite3_file", required=False)
-    parser.add_argument('-i', metavar='json_file', required=False)
+    parser.add_argument('-v', action="store_true", default=False, help="verbose")
+    parser.add_argument('-d', metavar="sqlite3_file", required=False, help="override default sqlite3_file")
+    parser.add_argument('-i', metavar='json_file', required=False, help="import json_file to database" )
     args = parser.parse_args()
     
     if args.v is not False:
