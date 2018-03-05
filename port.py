@@ -19,7 +19,6 @@ def _parse_record(record):
     try:
         validate(record,JSON_SCHEMA)
     except ValidationError as e: 
-        print "[!] error loading record %d" % idx
         raise e
         return False
 
@@ -36,7 +35,7 @@ def _parse_record(record):
 
 def importdb(filepath):
     print '[+] starting import'
-    start = int(time.time())
+    start = time.time()
     
     try:
         conn = sqlite3.connect(DB_PATH)
@@ -94,7 +93,7 @@ def importdb(filepath):
     conn.commit()
     conn.close()
     conn = None
-    print '[+] import ended in %d sec' % (int(time.time()) - start)
+    print '[+] import ended in %d sec' % (time.time() - start)
     return True
 
 def find(port_number):
@@ -119,6 +118,8 @@ if __name__ == '__main__':
 
     if args.d is not None:
         DB_PATH = args.d
+        if DEBUG == 1:
+            print "[:] changed database path to %s" % DB_PATH
     
     if args.i is not None and os.path.exists(args.i):
         if DEBUG == 1:
