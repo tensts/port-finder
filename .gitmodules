@@ -1,0 +1,6 @@
+[submodule "data/ports.json/ports.json"]
+	path = data/ports.json/ports.json
+	url = https://github.com/mephux/ports.json
+[submodule "data/ports.json"]
+	path = data/ports.json
+	url = https://github.com/mephux/ports.json
