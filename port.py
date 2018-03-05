@@ -17,9 +17,11 @@ JSON_SCHEMA={"description":"string",
 
 def _parse_record(record):
     try:
+        print record
         validate(record,JSON_SCHEMA)
-    except ValidationError:
+    except ValidationError as e: 
         print "[!] error loading record %d" % idx
+        raise e
         return False
 
     if record['tcp'] is True and record['udp'] is True:
@@ -59,7 +61,6 @@ def importdb(filepath):
     #so we dont have to stream it.
     data = json.load(open(filepath,'r'))
     print '[+] importing...'
-    multiports=[]
     for idx,port_number in enumerate(data['ports']):
         record = data['ports'][port_number]
 
@@ -68,10 +69,19 @@ def importdb(filepath):
             print record
         
         if isinstance(record,list) == False:
-            tmp.append(_parse_record(record))
+            try:
+                tmp.append(_parse_record(record))
+            except ValidationError:
+                print "[!] error loading record %d" % idx
+                continue
         else:
             for n in record:
-                tmp.append(_parse_record(n))
+                try:
+                    tmp.append(_parse_record(n))
+                except ValidationError:
+                    print "[!] error loading record %d" % idx
+                    continue
+
         
         if idx % 1024 == 0:
             cur.executemany('''REPLACE INTO ports(port,proto,status,description)
