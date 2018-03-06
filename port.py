@@ -59,8 +59,11 @@ def importdb(filepath):
     #so we dont have to stream it.
     data = json.load(open(filepath,'r'))
     print '[+] importing...'
-    for idx,port_number in enumerate(data['ports']):
-        record = data['ports'][port_number]
+    if 'ports' in data:
+        data = data['ports']
+
+    for idx,port_number in enumerate(data):
+        record = data[port_number]
 
         if DEBUG == 1:
             print "[:] importing nr: %d" % idx
