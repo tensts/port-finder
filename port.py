@@ -8,7 +8,8 @@ from jsonschema import validate
 import time
 import argparse
 
-DB_PATH=os.path.join(os.getcwd(),'data/ports.sqlite3')
+DB_PATH=os.path.join(os.path.dirname(os.path.realpath(__file__))
+        ,'data/ports.sqlite3')
 DEBUG=0
 JSON_SCHEMA={"description":"string",
         "port":"number",
