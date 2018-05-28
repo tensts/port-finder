@@ -99,21 +99,34 @@ def importdb(filepath):
     print '[+] import ended in %d sec' % (time.time() - start)
     return True
 
-def find(port_number):
+def find(port_number=-1, desc=''):
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
 
-    for record in cur.execute("SELECT * FROM PORTS WHERE PORT=?",(port_number,)):
+    if port_number != -1:
+        sql = "SELECT * FROM PORTS WHERE PORT=?"
+        params = (port_number,)
+    elif desc != '':
+        sql = ("SELECT * FROM PORTS WHERE DESCRIPTION LIKE ?")
+        params = (''.join(['%',desc,'%']),)
+    else:
+        return False
+
+    for record in cur.execute(sql, params):
         print '''[+] PORT: %d,\nPROTO: %s,\nSTATUS: %s,\nDESCRIPTION:\n%s''' % record
 
     return True
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('port', metavar="port_number", type=int, nargs='?',default='-1')
+
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument('port', metavar="port_number", type=int, nargs='?')
+
     parser.add_argument('-v', action="store_true", default=False, help="verbose")
     parser.add_argument('-d', metavar="sqlite3_file", required=False, help="override default sqlite3_file")
     parser.add_argument('-i', metavar='json_file', required=False, help="import json_file to database" )
+    group.add_argument('-s', metavar='description', help="search for port number containg string in description")
     args = parser.parse_args()
     
     if args.v is not False:
@@ -123,7 +136,6 @@ if __name__ == '__main__':
         DB_PATH = args.d
         if DEBUG == 1:
             print "[:] changed database path to %s" % DB_PATH
-    
     if args.i is not None and os.path.exists(args.i):
         if DEBUG == 1:
             print "[:] importing from %s to %s" %(args.i,DB_PATH)
@@ -131,7 +143,13 @@ if __name__ == '__main__':
         status = importdb(args.i)
         sys.exit(status)
     
-    if isinstance(args.port,int) and args.port != -1:
-        find(args.port)
+    if isinstance(args.port,int):
+        res = find(port_number=args.port)
+    elif args.s is not None:
+        res = find(desc=args.s)
     else:
-        parser.print_help(sys.stderr)
+        res = False
+
+    if res == False:
+       parser.print_help(sys.stderr)
+
