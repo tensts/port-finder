@@ -100,7 +100,7 @@ def importdb(filepath):
     print '[+] import ended in %d sec' % (time.time() - start)
     return True
 
-def find(port_number=-1, desc=''):
+def find(port_number=-1, desc='', port_range=''):
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
 
@@ -110,6 +110,16 @@ def find(port_number=-1, desc=''):
     elif desc != '':
         sql = ("SELECT * FROM PORTS WHERE DESCRIPTION LIKE ?")
         params = (''.join(['%',desc,'%']),)
+    elif port_range != '':
+        port_range = port_range.split('-')
+        if len(port_range) == 2:
+            try:
+                port_range[0], port_range[1] = int(port_range[0]), int(port_range[1])
+            except ValueError:
+                return False
+            port_range.sort()
+            sql = ("SELECT * FROM PORTS WHERE PORT BETWEEN ? AND ?")
+            params = tuple(port_range)
     else:
         return False
 
@@ -128,6 +138,8 @@ if __name__ == '__main__':
     parser.add_argument('-d', metavar="sqlite3_file", required=False, help="override default sqlite3_file")
     parser.add_argument('-i', metavar='json_file', required=False, help="import json_file to database" )
     group.add_argument('-s', metavar='description', help="search for port number containg string in description")
+    group.add_argument('-r', metavar='low_port_number-high_port_number', help="search for ports by range")
+
     args = parser.parse_args()
     
     if args.v is not False:
@@ -148,6 +160,8 @@ if __name__ == '__main__':
         res = find(port_number=args.port)
     elif args.s is not None:
         res = find(desc=args.s)
+    elif args.r is not None:
+        res = find(port_range=args.r)
     else:
         res = False
 
