@@ -4,7 +4,7 @@ import os
 import sys
 import json
 import sqlite3
-from jsonschema import validate
+#from jsonschema import validate
 import time
 import argparse
 
@@ -17,11 +17,11 @@ JSON_SCHEMA={"description":"string",
         "proto":"string"}
 
 def _parse_record(record):
-    try:
-        validate(record,JSON_SCHEMA)
-    except ValidationError as e: 
-        raise e
-        return False
+#    try:
+#        validate(record,JSON_SCHEMA)
+#    except ValidationError as e: 
+#        raise e
+#        return False
 
     if record['tcp'] is True and record['udp'] is True:
         record['proto'] = 'tcp|udp'
@@ -131,7 +131,7 @@ def find(port_number=-1, desc='', port_range=''):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
 
-    group = parser.add_mutually_exclusive_group(required=True)
+    group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument('port', metavar="port_number", type=int, nargs='?')
 
     parser.add_argument('-v', action="store_true", default=False, help="verbose")

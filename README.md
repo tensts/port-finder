@@ -9,7 +9,6 @@ You can search port by its number or by keywords in port description.
 ## Usage
 ### Installing
 ```
-$ pip install -r requirements.txt
 $ chmod +x port.py
 #optionaly
 # ln -s path/to/port.py /usr/bin/port
