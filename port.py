@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/python3
 
 import os
 import sys
@@ -35,31 +35,31 @@ def _parse_record(record):
 
 
 def importdb(filepath):
-    print '[+] starting import'
+    print('[+] starting import')
     start = time.time()
     
     try:
         conn = sqlite3.connect(DB_PATH)
     except:
-        print '[!] could not connect to sqlite3'
+        print('[!] could not connect to sqlite3')
         return 1
     
     cur = conn.cursor()
 
-    print '[+] dropping existing database...'
+    print('[+] dropping existing database...')
     cur.execute('DROP TABLE IF EXISTS "ports"')
     conn.commit()
     
-    print '[+] creating new table'
+    print('[+] creating new table')
     cur.execute("CREATE TABLE ports(port int, proto varchar(7),status varchar(16), description text)")
     conn.commit()
     
     tmp=[]
-    print '[+] reading json file'
+    print('[+] reading json file')
     #json rather will fit to memory
     #so we dont have to stream it.
     data = json.load(open(filepath,'r'))
-    print '[+] importing...'
+    print('[+] importing...')
     if 'ports' in data:
         data = data['ports']
 
@@ -67,21 +67,21 @@ def importdb(filepath):
         record = data[port_number]
 
         if DEBUG == 1:
-            print "[:] importing nr: %d" % idx
-            print record
+            print("[:] importing nr: %d" % idx)
+            print(record)
         
         if isinstance(record,list) == False:
             try:
                 tmp.append(_parse_record(record))
             except ValidationError:
-                print "[!] error loading record %d" % idx
+                print("[!] error loading record %d" % idx)
                 continue
         else:
             for n in record:
                 try:
                     tmp.append(_parse_record(n))
                 except ValidationError:
-                    print "[!] error loading record %d" % idx
+                    print("[!] error loading record %d" % idx)
                     continue
 
         
@@ -97,7 +97,7 @@ def importdb(filepath):
     conn.commit()
     conn.close()
     conn = None
-    print '[+] import ended in %d sec' % (time.time() - start)
+    print('[+] import ended in %d sec' % (time.time() - start))
     return True
 
 def find(port_number=-1, desc='', port_range=''):
@@ -124,7 +124,7 @@ def find(port_number=-1, desc='', port_range=''):
         return False
 
     for record in cur.execute(sql, params):
-        print '''[+] PORT: %d,\nPROTO: %s,\nSTATUS: %s,\nDESCRIPTION:\n%s''' % record
+        print('''[+] PORT: %d,\nPROTO: %s,\nSTATUS: %s,\nDESCRIPTION:\n%s''' % record)
 
     return True
 
@@ -148,10 +148,10 @@ if __name__ == '__main__':
     if args.d is not None:
         DB_PATH = args.d
         if DEBUG == 1:
-            print "[:] changed database path to %s" % DB_PATH
+            print("[:] changed database path to %s" % DB_PATH)
     if args.i is not None and os.path.exists(args.i):
         if DEBUG == 1:
-            print "[:] importing from %s to %s" %(args.i,DB_PATH)
+            print("[:] importing from %s to %s" %(args.i,DB_PATH))
             #sys.exit("[+] DEBUG END")
         status = importdb(args.i)
         sys.exit(status)
