@@ -143,15 +143,15 @@ def find(port_number=-1, desc='', port_range=''):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
+    parser.add_argument('-v', action="store_true", default=False, help="verbose")
 
     group = parser.add_mutually_exclusive_group(required=False)
     group.add_argument('port', metavar="port_number", type=int, nargs='?')
-
-    parser.add_argument('-v', action="store_true", default=False, help="verbose")
-    parser.add_argument('-d', metavar="sqlite3_file", required=False, help="override default sqlite3_file")
-    parser.add_argument('-i', metavar='json_file', required=False, help="import json_file to database" )
     group.add_argument('-s', metavar='description', help="search for port number containg string in description")
     group.add_argument('-r', metavar='low_port_number-high_port_number', help="search for ports by range")
+
+    group.add_argument('-d', metavar="sqlite3_file", required=False, help="override default sqlite3_file")
+    group.add_argument('-i', metavar='json_file', required=False, help="import json_file to database" )
 
     args = parser.parse_args()
     
