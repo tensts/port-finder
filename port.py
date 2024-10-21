@@ -40,15 +40,18 @@ def importdb(filepath):
     
     try:
         conn = sqlite3.connect(DB_PATH)
-    except:
-        print('[!] could not connect to sqlite3')
-        return 1
-    
+    except sqlite3.OperationalError as e:
+        print(f"[-] DB error: {e} \"{DB_PATH}\"")
+        return None
     cur = conn.cursor()
 
     print('[+] dropping existing database...')
-    cur.execute('DROP TABLE IF EXISTS "ports"')
-    conn.commit()
+    try:
+        cur.execute('DROP TABLE IF EXISTS "ports"')
+        conn.commit()
+    except sqlite3.DatabaseError as e:
+        print(f"[-] DB error: {e}")
+        return None
     
     print('[+] creating new table')
     cur.execute("CREATE TABLE ports(port int, proto varchar(7),status varchar(16), description text)")
@@ -96,11 +99,15 @@ def importdb(filepath):
     cur.execute("CREATE INDEX port_ports on ports(port)")
     conn.commit()
     conn.close()
-    conn = None
+
     print('[+] import ended in %d sec' % (time.time() - start))
     return True
 
 def find(port_number=-1, desc='', port_range=''):
+    if not os.path.isfile(DB_PATH):
+        print(f"[-] {DB_PATH} not exists")
+        return None
+
     con = sqlite3.connect(DB_PATH)
     cur = con.cursor()
 
@@ -123,7 +130,13 @@ def find(port_number=-1, desc='', port_range=''):
     else:
         return False
 
-    for record in cur.execute(sql, params):
+    try:
+        result = cur.execute(sql, params)
+    except sqlite3.OperationalError as e:
+        print(f"[-] sqlite3 error: {e}")
+        return None
+
+    for record in result:
         print('''[+] PORT: %d,\nPROTO: %s,\nSTATUS: %s,\nDESCRIPTION:\n%s''' % record)
 
     return True
